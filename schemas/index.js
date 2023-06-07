@@ -1,6 +1,6 @@
 const contacts = require("./contacts");
-const contactsDB = require("./contactsDB");
+const users = require("./users");
 module.exports = {
   contacts,
-  contactsDB,
+  users,
 };
