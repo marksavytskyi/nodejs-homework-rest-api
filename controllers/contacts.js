@@ -1,12 +1,11 @@
 const {listContacts, getContactById, addContact, removeContact, updateContact, updateStatusContact} = require("../models/contacts");
-const {nanoid} = require("nanoid");
 const HttpError = require("../helpers/HttpError");
 const ctrlWrapper = require("../helpers/ctrlWrapper");
 
-const contactId = nanoid();
+const getAll = async (req, res) => {
+  const {_id: owner} = req.user;
 
-const getAll = async (__, res) => {
-  const contacts = await listContacts();
+  const contacts = await listContacts({...req, owner});
   res.status(200).json(contacts);
 };
 
@@ -21,17 +20,13 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const newContact = {
-    id: contactId,
-    ...req.body,
-  };
-
-  const result = await addContact(newContact);
+  const {_id} = req.user;
+  const result = await addContact({...req.body, owner: _id});
 
   if (!result) {
     throw HttpError(404, "Not found");
   }
-  res.status(201).json(newContact);
+  res.status(201).json(result);
 };
 
 const remove = async (req, res) => {
